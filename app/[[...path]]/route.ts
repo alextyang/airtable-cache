@@ -6,10 +6,15 @@ const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 let cache: { [key: string]: any } = {};
 let timestamps: { [key: string]: number } = {};
 
-export async function GET(request: NextRequest, { params }: { params: { path: string[] } }) {
-    const { searchParams } = request.nextUrl;
-    let path = (await params).path;
-    if (!path || Object.entries(path).length === 0) {
+export async function GET(request: NextRequest) {
+    const { searchParams, pathname } = request.nextUrl;
+    // Extract path segments from the pathname
+    let path = pathname
+        .replace(/^\/app\/|\/$/g, "") // Remove leading '/app/' and trailing '/'
+        .split("/")
+        .filter(Boolean);
+
+    if (!path || path.length === 0) {
         path = [""]; // Handle the case where no path is provided
     }
 
@@ -93,4 +98,4 @@ async function refreshCache(url: string) {
     saveCache();
 }
 
-// http://localhost:3000/appHcZTzlfXAJpL7I/tblm2TqCcDcx94nA2?filterByFormula=OR(FIND(%27Cohort%2010%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2010%27%2CFIND(%27Cohort%2011%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2011%27%2CFIND(%27Cohort%2012%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2012%27)
+// http://localhost:4444/appHcZTzlfXAJpL7I/tblm2TqCcDcx94nA2?filterByFormula=OR(FIND(%27Cohort%2010%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2010%27%2CFIND(%27Cohort%2011%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2011%27%2CFIND(%27Cohort%2012%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2012%27)
