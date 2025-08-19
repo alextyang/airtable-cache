@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
         path = [""]; // Handle the case where no path is provided
     }
 
-    const url = `https://api.airtable.com/v0/${path.join("/")}?${params}`;
+    const url = `https://api.airtable.com/${path.join("/")}?${params}`;
     console.log("\n\n[API] Request: " + decodeURIComponent(url));
 
     let data: any;
