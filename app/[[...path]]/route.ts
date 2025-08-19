@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-let cache: { [key: string]: any } = {};
+let cache: { [key: string]: string } = {};
 let timestamps: { [key: string]: number } = {};
 
 export async function GET(request: NextRequest) {
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 
     console.log("[API] Response: ", response.status);
 
-    return new Response(data,
+    return new Response(JSON.stringify(data),
         {
             status: response.status,
             headers: {
@@ -90,7 +90,7 @@ async function refreshCache(url: string) {
     const data = await response.json();
 
     if (response.ok) {
-        cache[url] = data;
+        cache[url] = JSON.stringify(data);
         timestamps[url] = Date.now();
         console.log("[API] Cache refreshed for URL:", decodeURIComponent(url));
     }
