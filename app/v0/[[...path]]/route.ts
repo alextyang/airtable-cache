@@ -92,7 +92,7 @@ async function refreshCache(url: string) {
     const data = await response.json();
 
     if (response.ok) {
-        cache[url] = JSON.stringify(data);
+        cache[url] = data;
         timestamps[url] = Date.now();
         console.log("[API] Cache refreshed for URL:", decodeURIComponent(url));
     }
