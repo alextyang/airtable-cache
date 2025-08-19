@@ -64,7 +64,7 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
     );
 }
 
-export async function saveCache() {
+async function saveCache() {
     const cacheString = JSON.stringify(cache);
     const fs = require('fs');
     const path = require('path');
@@ -74,7 +74,7 @@ export async function saveCache() {
     console.log("[API] Cache saved to", cacheFilePath);
 }
 
-export async function refreshCache(url: string) {
+async function refreshCache(url: string) {
     const response = await fetch(url, {
         headers: {
             Authorization: `Bearer ${AIRTABLE_API_KEY}`,
