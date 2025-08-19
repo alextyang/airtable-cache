@@ -7,18 +7,20 @@ let cache: { [key: string]: string } = {};
 let timestamps: { [key: string]: number } = {};
 
 export async function GET(request: NextRequest) {
-    const { searchParams, pathname } = request.nextUrl;
+    let { searchParams, pathname } = request.nextUrl;
     // Extract path segments from the pathname
     let path = pathname
         .replace(/^\/app\/|\/$/g, "") // Remove leading '/app/' and trailing '/'
         .split("/")
         .filter(Boolean);
 
+    let params = searchParams.toString().replaceAll('+', '%20'); // Replace '+' with '%20' for URL encoding
+
     if (!path || path.length === 0) {
         path = [""]; // Handle the case where no path is provided
     }
 
-    const url = `https://api.airtable.com/v0/${path.join("/")}?${searchParams.toString()}`;
+    const url = `https://api.airtable.com/v0/${path.join("/")}?${params}`;
     console.log("\n\n[API] Request: " + decodeURIComponent(url));
 
     let data: any;
@@ -51,7 +53,7 @@ export async function GET(request: NextRequest) {
     data = await response.json();
 
     if (response.ok) {
-        cache[url] = data;
+        cache[url] = JSON.stringify(data);
         timestamps[url] = Date.now();
     }
 
@@ -70,10 +72,10 @@ export async function GET(request: NextRequest) {
 }
 
 async function saveCache() {
-    const cacheString = JSON.stringify(cache);
+    const cacheString = `export const cache = \`${JSON.stringify(cache)}\`;`;
     const fs = require('fs');
     const path = require('path');
-    const cacheFilePath = path.join(process.cwd(), 'public', 'cache.json');
+    const cacheFilePath = path.join(process.cwd(), 'public', 'cache.js');
 
     fs.writeFileSync(cacheFilePath, cacheString, 'utf8');
     console.log("[API] Cache saved to", cacheFilePath);
@@ -98,4 +100,4 @@ async function refreshCache(url: string) {
     saveCache();
 }
 
-// http://localhost:4444/appHcZTzlfXAJpL7I/tblm2TqCcDcx94nA2?filterByFormula=OR(FIND(%27Cohort%2010%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2010%27%2CFIND(%27Cohort%2011%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2011%27%2CFIND(%27Cohort%2012%27%2C%20ARRAYJOIN(%7BCohort%7D%2C%20%27%2C%27))%20%3E%200%2C%20%7BCohort%7D%20%3D%20%27Cohort%2012%27)
+// http://localhost:4444/appHcZTzlfXAJpL7I/tblm2TqCcDcx94nA2?filterByFormula=OR(FIND('September 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'September 2025',FIND('October 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'October 2025',FIND('November 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'November 2025')
