@@ -72,7 +72,9 @@ export async function GET(request: NextRequest) {
 }
 
 async function saveCache() {
-    const cacheString = `export const cache = ${JSON.stringify(cache)};`;
+    const cacheString = `export const cache = ${JSON.stringify(cache)};
+    window.airtableCache = cache;`;
+
     const fs = require('fs');
     const path = require('path');
     const cacheFilePath = path.join(process.cwd(), 'public', 'cache.js');
