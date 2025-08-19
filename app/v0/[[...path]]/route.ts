@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
         .split("/")
         .filter(Boolean);
 
-    let params = searchParams.toString().replaceAll('+', '%20'); // Replace '+' with '%20' for URL encoding
+    let params = searchParams.toString();
 
     if (!path || path.length === 0) {
         path = [""]; // Handle the case where no path is provided
@@ -100,4 +100,4 @@ async function refreshCache(url: string) {
     saveCache();
 }
 
-// http://localhost:4444/appHcZTzlfXAJpL7I/tblm2TqCcDcx94nA2?filterByFormula=OR(FIND('September 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'September 2025',FIND('October 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'October 2025',FIND('November 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'November 2025')
+// http://localhost:4444/v0/appHcZTzlfXAJpL7I/tblm2TqCcDcx94nA2?filterByFormula=OR(FIND('September 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'September 2025',FIND('October 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'October 2025',FIND('November 2025', ARRAYJOIN({Cohort}, ',')) > 0, {Cohort} = 'November 2025')
