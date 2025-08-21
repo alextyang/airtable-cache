@@ -11,7 +11,12 @@ export async function GET(request: NextRequest) {
     let { searchParams, pathname } = request.nextUrl;
 
     let pageKey = request.headers.get("referer");
-    const referrer = pageKey?.split("/")[2] || "unknown";
+    let referrer = pageKey?.split("/")[2] || "unknown";
+
+    if (searchParams.has("ref")) {
+        referrer = searchParams.get("ref") || referrer;
+        searchParams.delete("ref"); // Remove the ref parameter to avoid it in the API call
+    }
 
     // Extract path segments from the pathname
     let path = pathname
