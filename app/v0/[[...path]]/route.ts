@@ -13,9 +13,16 @@ export async function GET(request: NextRequest) {
     let pageKey = request.headers.get("referer");
     let referrer = pageKey?.split("/")[2] || "unknown";
 
+    let refresh = 'false';
+
     if (searchParams.has("ref")) {
         referrer = searchParams.get("ref") || referrer;
         searchParams.delete("ref"); // Remove the ref parameter to avoid it in the API call
+    }
+
+    if (searchParams.has("refresh")) {
+        refresh = searchParams.get("refresh") ?? 'false';
+        searchParams.delete("refresh");
     }
 
     // Extract path segments from the pathname
@@ -40,7 +47,7 @@ export async function GET(request: NextRequest) {
         timestamps[referrer] = {};
     }
 
-    if (cache[referrer][url]) {
+    if (cache[referrer][url] && !(refresh === 'true')) {
         console.log("\n[API] Cache hit for URL:", decodeURIComponent(url));
         data = cache[referrer][url];
 
